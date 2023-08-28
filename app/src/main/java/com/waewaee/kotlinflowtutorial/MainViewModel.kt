@@ -35,14 +35,24 @@ class MainViewModel: ViewModel() {
     }
 
     private fun collectFlow() {
-        val flow1 = (1..5).asFlow()
+        val flow = flow {
+            delay(250L)
+            emit("Appetizer")
+            delay(1000L)
+            emit("Main Dish")
+            delay(100L)
+            emit("Dessert")
+        }
 
         viewModelScope.launch {
-//            flow1.flatMapMerge { id ->
-//                getRecipeById(id)
-//            }.collect { value ->
-//                println("The value is $value")
-//        }
+            flow.onEach {
+                println("Flow: $it is delivered.")
+            }
+                .collect {
+                    println("Flow: Now eating $it.")
+                    delay(1500L)
+                    println("Flow: Finished eating $it.")
+                }
         }
     }
 }
