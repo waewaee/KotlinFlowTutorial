@@ -11,12 +11,13 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.reduce
 import kotlinx.coroutines.launch
 
 class MainViewModel: ViewModel() {
 
     val countDownFlow = flow<Int> {
-        val startingValue = 10
+        val startingValue = 5
         var currentValue = startingValue
         while (currentValue > 0) {
             delay(1000L)
@@ -35,11 +36,11 @@ class MainViewModel: ViewModel() {
 //        }.launchIn(viewModelScope)
 
         viewModelScope.launch {
-            val count = countDownFlow
-                .count {
-                    it % 2 == 0
+            val reduceResult = countDownFlow
+                .reduce { accumulator, value ->
+                    accumulator + value
                 }
-            println("The count is $count")
+            println("The count is $reduceResult")
             }
         }
 }
