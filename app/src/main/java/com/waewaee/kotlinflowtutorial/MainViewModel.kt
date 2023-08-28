@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
@@ -26,7 +27,11 @@ class MainViewModel: ViewModel() {
 
     private fun collectFlow() {
         viewModelScope.launch {
-            countDownFlow.collectLatest { time ->
+            countDownFlow
+                .filter { time ->
+                    time % 2 == 0
+                }
+                .collect { time ->
                 delay(1500L)
                 println("The current time is $time.")
             }
