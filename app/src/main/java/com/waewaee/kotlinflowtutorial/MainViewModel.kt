@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.count
@@ -48,6 +49,7 @@ class MainViewModel: ViewModel() {
             flow.onEach {
                 println("Flow: $it is delivered.")
             }
+                .buffer()
                 .collect {
                     println("Flow: Now eating $it.")
                     delay(1500L)
