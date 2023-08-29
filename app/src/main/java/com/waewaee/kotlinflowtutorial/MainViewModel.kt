@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -24,7 +25,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.reduce
 import kotlinx.coroutines.launch
 
-class MainViewModel: ViewModel() {
+class MainViewModel(private val dispatchers: DispatcherProvider): ViewModel() {
 
     val countDownFlow = flow<Int> {
         val startingValue = 5
@@ -34,7 +35,7 @@ class MainViewModel: ViewModel() {
             currentValue--
             emit(currentValue)
         }
-    }
+    }.flowOn(dispatchers.main)
 
     private val _stateFlow = MutableStateFlow(0)
     val stateFlow = _stateFlow.asStateFlow()
@@ -44,13 +45,13 @@ class MainViewModel: ViewModel() {
 
     init {
         squareNumber(3)
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchers.main) {
             sharedFlow.collect {
                 delay(2000L)
                 println("FIRST FLOW: The received number is $it")
             }
         }
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchers.main) {
             sharedFlow.collect {
                 delay(3000L)
                 println("SECOND FLOW: The received number is $it")
@@ -59,7 +60,7 @@ class MainViewModel: ViewModel() {
     }
 
     fun squareNumber(number: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchers.main) {
             _sharedFlow.emit(number * number)
         }
     }
