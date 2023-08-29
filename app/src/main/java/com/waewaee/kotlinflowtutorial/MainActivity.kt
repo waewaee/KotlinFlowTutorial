@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
 //        }
 
         collectLatestLifecycleFlow(viewModel.stateFlow) { number ->
-            binding.tvCounter.text = number.toString()
+//           binding.tvCounter.text = number.toString()
         }
 
         setContent {
