@@ -39,10 +39,11 @@ class MainViewModel: ViewModel() {
     private val _stateFlow = MutableStateFlow(0)
     val stateFlow = _stateFlow.asStateFlow()
 
-    private val _sharedFlow = MutableSharedFlow<Int>()
+    private val _sharedFlow = MutableSharedFlow<Int>(replay = 5)
     val sharedFlow = _sharedFlow.asSharedFlow()
 
     init {
+        squareNumber(3)
         viewModelScope.launch {
             sharedFlow.collect {
                 delay(2000L)
@@ -55,7 +56,6 @@ class MainViewModel: ViewModel() {
                 println("SECOND FLOW: The received number is $it")
             }
         }
-        squareNumber(3)
     }
 
     fun squareNumber(number: Int) {
