@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +46,12 @@ class MainActivity : ComponentActivity() {
                 val viewModel = viewModel<MainViewModel>()
                 val count = viewModel.stateFlow.collectAsState(initial = 10)
 
+                LaunchedEffect(key1 = true) {
+                    viewModel.sharedFlow.collect { number ->
+                        ////
+                    }
+                }
+
                 Box(modifier = Modifier.fillMaxSize()) {
                     Button(onClick = { viewModel.incrementCounter() }) {
                         Text(text = "Counter: ${count.value}")
@@ -59,6 +66,14 @@ fun <T> ComponentActivity.collectLatestLifecycleFlow(flow: Flow<T>, collect: sus
     lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             flow.collectLatest(collect)
+        }
+    }
+}
+
+fun <T> ComponentActivity.collectLifecycleFlow(flow: Flow<T>, collect: suspend (T) -> Unit) {
+    lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            flow.collect(collect)
         }
     }
 }
